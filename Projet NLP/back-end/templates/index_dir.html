@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Construire l'index - API Références Juridiques</title>
+<style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; display:flex; flex-direction:column; align-items:center; background-color:#f9f9f9; color:#333; }
+    header { width:100%; background-color:#004c97; color:white; padding:20px 0; text-align:center; box-shadow:0px 3px 6px rgba(0,0,0,0.1); }
+    main { width:80%; max-width:1000px; margin:20px auto; background:white; padding:20px; border-radius:10px; box-shadow:0px 3px 10px rgba(0,0,0,0.1); }
+    h1,h2 { text-align:center; margin-bottom:10px; }
+    p { text-align:center; font-size:14px; margin-bottom:20px; }
+    input[type=text] { width:80%; padding:5px; border-radius:5px; border:1px solid #ccc; display:block; margin:auto; margin-bottom:10px; }
+    pre, table { background:#f4f4f4; padding:10px; overflow-x:auto; border-radius:5px; border:1px solid #ddd; width:100%; margin-bottom:10px; }
+    th, td { border:1px solid #ccc; padding:5px; text-align:left; }
+    th { background:#eee; }
+    button { padding:8px 15px; cursor:pointer; background-color:#004c97; color:white; border:none; border-radius:5px; margin-top:10px; transition:background 0.3s; }
+    button:hover { background-color:#003366; }
+    .back-home { display:block; margin-top:20px; text-align:center; color:#004c97; text-decoration:none; font-weight:bold; }
+    .back-home:hover { text-decoration:underline; }
+    /* Bouton header en cohérence avec les autres boutons */
+.header-btn {
+    background-color: #0055a4; /* bleu Legifrance */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    float: right; /* place le bouton à droite */
+    margin-right: 20px;
+    transition: 0.3s;
+}
+
+.header-btn:hover {
+    background-color: #003f7d;
+}
+    
+</style>
+</head>
+<body>
+
+<header>
+    <h1>API Références Juridiques
+    <a href="http://localhost:8000/documentation.html" class="header-btn" target="_blank">📖 Documentation</a
+    <link rel="icon" type="image/png" href="/static/favicon.ico">
+    </h1>
+</header>
+
+<main>
+    <h2>Construire l'index d'un dossier</h2>
+    <p>Indiquez le chemin d'un dossier local sur le serveur contenant des fichiers HTML. Cliquez sur "Construire l'index" pour générer l'arborescence des références juridiques.</p>
+
+    <input type="text" id="dirPath" value="C:\\Users\\kouno\\Downloads\\Projet NLP\\data" placeholder="Chemin du dossier local">
+    <button onclick="buildIndex()">Construire l'index</button>
+
+    <pre id="indexResult"></pre>
+
+    <h2>Arborescence des références</h2>
+    <div id="treeResult"></div>
+
+    <a class="back-home" href="http://127.0.0.1:8000/ui#">← Retour à l'accueil</a>
+</main>
+
+<script>
+const API_URL = "http://127.0.0.1:8000";
+
+// ====== Construire l'index ======
+function buildIndex() {
+    let path = document.getElementById("dirPath").value;
+    path = path.replace(/\\/g, "\\\\"); // Windows double backslash
+    fetch(`${API_URL}/index-dir`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({path})
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById("indexResult").textContent = JSON.stringify(data, null, 2);
+        showTree(); // Afficher le tree après index
+    })
+    .catch(err => console.error(err));
+}
+
+// ====== Afficher l'arborescence ======
+function showTree() {
+    fetch(`${API_URL}/tree`)
+    .then(r => { if(!r.ok) return r.json().then(err=>{throw err}); return r.json(); })
+    .then(data => {
+        const container = document.getElementById("treeResult");
+        container.innerHTML = "";
+        for(const type in data){
+            const typeHeader = document.createElement("h3");
+            typeHeader.textContent = type;
+            container.appendChild(typeHeader);
+
+            const table = document.createElement("table");
+            const thead = document.createElement("thead");
+            thead.innerHTML = "<tr><th>ID</th><th>Texte</th><th>Fichier</th><th>Date</th></tr>";
+            table.appendChild(thead);
+
+            const tbody = document.createElement("tbody");
+            data[type].sort((a,b) => (a.date||"").localeCompare(b.date||"")).forEach(item=>{
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${item.id}</td><td>${item.text}</td><td>${item.file}</td><td>${item.date||""}</td>`;
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            container.appendChild(table);
+        }
+    })
+    .catch(err=>document.getElementById("treeResult").textContent = JSON.stringify(err,null,2));
+}
+</script>
+
+</body>
+</html>

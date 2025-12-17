@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>API Références Juridiques - Accueil</title>
+<!-- Style inspiré de Legifrance : clair, centré et lisible -->
+<style>
+    body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+        text-align: center;
+    }
+    header {
+        background-color: #0055a4; /* bleu Legifrance */
+        color: white;
+        padding: 30px 0;
+        font-size: 2em;
+    }
+    main {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+        background: white;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        border-radius: 10px;
+    }
+    h1 {
+        color: #0055a4;
+        margin-bottom: 20px;
+    }
+    h2 {
+        color: #0055a4;
+        margin-top: 40px;
+    }
+    p {
+        font-size: 1em;
+        line-height: 1.5em;
+        margin-bottom: 20px;
+    }
+    ul {
+        text-align: left; 
+        display: inline-block;
+        margin-bottom: 30px;
+    }
+    /* Conteneur des boutons */
+    .button-container {
+        display: flex;
+        flex-direction: column; /* colonnes verticales */
+        align-items: center; /* centrer horizontalement */
+        gap: 15px; /* espace entre les boutons */
+    }
+    button {
+        background-color: #0055a4;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        font-size: 1em;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+        width: 300px; /* largeur uniforme pour tous les boutons */
+    }
+    button:hover {
+        background-color: #003f7d;
+    }
+    a {
+        color: #0055a4;
+        text-decoration: none;
+    }
+    a:hover {
+        text-decoration: underline;
+    }/* Bouton header en cohérence avec les autres boutons */
+.header-btn {
+    background-color: #0055a4; /* bleu Legifrance */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    float: right; /* place le bouton à droite */
+    margin-right: 20px;
+    transition: 0.3s;
+}
+
+.header-btn:hover {
+    background-color: #003f7d;
+}
+    
+</style>
+</head>
+<body>
+
+<header>
+    🚀 API Références Juridiques
+     <a href="http://localhost:8000/documentation.html" class="header-btn" target="_blank">📖 Documentation</a
+    <link rel="icon" type="image/png" href="/static/favicon.ico">
+</header>
+
+<main>
+    <h1>Bienvenue sur l'interface de test 🧾</h1>
+    <p>Cette application permet d’annoter, indexer et classer des fichiers HTML contenant des références juridiques 📄.</p>
+    <p>Les boutons ci-dessous vous permettent de :</p>
+    <ul>
+        <li>🖊️ Annoter un texte ou un fichier HTML.</li>
+        <li>📂 Construire un index pour tous les fichiers d’un dossier  et Afficher l'arborescence 🌳.</li>
+        <li>📦 Télécharger un ZIP annoté de vos fichiers HTML.</li>
+        <li>🏷️ Classer les fichiers par type d’arrêté et explorer leur contenu.</li>
+        <li>🔗 Transformer automatiquement les références dans un HTML pour la démo.</li>
+    </ul>
+
+    <!-- Boutons vers les pages spécifiques -->
+    <div class="button-container">
+        <button onclick="location.href='annotate.html'">Annoter un texte / fichier ✏️</button>
+        <button onclick="location.href='index_dir.html'">Construire l'index 🗂️ et Afficher l'arborescence 🌳</button>
+        <button onclick="location.href='annotate_dir_zip.html'">Télécharger ZIP annoté 📦</button>
+        <button onclick="location.href='classification.html'">Classification par type d'arrêté 🏷️</button>
+        <button onclick="window.location.href='demo_annotate.html'">Transformation automatique des références 🔗</button>
+    </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Démo Transformation Références</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; text-align: center; }
+    header { background: #003366; color: white; padding: 20px 0; font-size: 1.5em; }
+    main { margin: 20px auto; max-width: 900px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2 { margin-top: 40px; color:#003366; }
+    textarea { width: 100%; height: 120px; margin-top: 10px; }
+    pre { background: #f4f4f4; padding: 10px; overflow-x: auto; max-height: 300px; text-align: left; }
+    button { margin-top: 10px; padding: 8px 12px; background: #003366; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; }
+    button:hover { background: #0055a5; }
+    a { color: #003366; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    p.description { text-align: justify; margin: 10px 0; }
+    
+    /* Bouton header en cohérence avec les autres boutons */
+.header-btn {
+    background-color: #0055a4; /* bleu Legifrance */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    float: right; /* place le bouton à droite */
+    margin-right: 20px;
+    transition: 0.3s;
+}
+
+.header-btn:hover {
+    background-color: #003f7d;
+}
+    
+</style>
+</head>
+<body>
+
+<header>🔗 Démo Transformation Références
+<a href="http://localhost:8000/documentation.html" class="header-btn" target="_blank">📖 Documentation</a
+<link rel="icon" type="image/png" href="/static/favicon.ico">
+</header>
+
+<main>
+<p class="description">
+    Collez un extrait HTML d’un arrêté et cliquez sur le bouton pour transformer automatiquement les références en balises <a>.
+</p>
+
+<textarea id="demoHtml">
+<p>Les prescriptions du présent arrêté se substituent aux dispositions imposées par les actes administratifs suivants :</p>
+<ul>
+<li>arrêté préfectoral n° 87/IC/123 du 1er avril 1987 ;</li>
+<li>annexe 2 de l’arrêté ministériel du 12 octobre 1999 ;</li>
+</ul>
+</textarea>
+<br>
+<button onclick="demoAnnotate()">Transformer les références 🔗</button>
+<pre id="demoResult"></pre>
+ <!-- Bouton retour accueil -->
+ <br>
+ <a href="http://127.0.0.1:8000/ui#">🏠 Retour à l'accueil</a>
+</main>
+
+<script>
+const API_URL = "http://127.0.0.1:8000";
+
+// Fonction qui envoie le texte à l'API /annotate et récupère le HTML annoté
+function demoAnnotate() {
+    const html = document.getElementById("demoHtml").value;
+    fetch(`${API_URL}/annotate`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({html})
+    })
+    .then(r => r.json())
+    .then(data => {
+        // data.html contient les <a> avec href et data-*
+        // On retire tous les attributs pour ne garder que <a>texte</a>
+        let simplified = data.html.replace(/<a [^>]*>/g, "<a>").replace(/<\/a>/g, "</a>");
+        document.getElementById("demoResult").textContent = simplified;
+    })
+    .catch(err => console.error(err));
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Classification des arrêtés - API Références Juridiques</title>
+<style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; display:flex; flex-direction:column; align-items:center; background-color:#f9f9f9; color:#333; }
+    header { width:100%; background-color:#004c97; color:white; padding:20px 0; text-align:center; box-shadow:0px 3px 6px rgba(0,0,0,0.1); }
+    main { width:80%; max-width:1000px; margin:20px auto; background:white; padding:20px; border-radius:10px; box-shadow:0px 3px 10px rgba(0,0,0,0.1); }
+    h1,h2,h3 { text-align:center; margin-bottom:10px; }
+    p { text-align:center; font-size:14px; margin-bottom:20px; }
+    a.arrete { display:block; margin:5px 0; color:#004c97; text-decoration:none; font-weight:bold; }
+    a.arrete:hover { text-decoration:underline; }
+    ul { list-style-type: none; padding-left:0; }
+    li { margin-bottom:5px; }
+    button { padding:8px 15px; cursor:pointer; background-color:#004c97; color:white; border:none; border-radius:5px; margin-top:10px; transition:background 0.3s; }
+    button:hover { background-color:#003366; }
+    .back-home { display:block; margin-top:20px; text-align:center; color:#004c97; text-decoration:none; font-weight:bold; }
+    .back-home:hover { text-decoration:underline; }
+    /* Bouton header en cohérence avec les autres boutons */
+.header-btn {
+    background-color: #0055a4; /* bleu Legifrance */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    float: right; /* place le bouton à droite */
+    margin-right: 20px;
+    transition: 0.3s;
+}
+
+.header-btn:hover {
+    background-color: #003f7d;
+}
+    
+</style>
+</head>
+<body>
+
+<header>
+    <h1>API Références Juridiques
+    <a href="http://localhost:8000/documentation.html" class="header-btn" target="_blank">📖 Documentation</a
+    <link rel="icon" type="image/png" href="/static/favicon.ico">
+    </h1>
+</header>
+
+<main>
+    <h2>Classification par type d'arrêté</h2>
+    <p>Cliquez sur "Classification" pour obtenir tous les types d'arrêtés détectés. Cliquez sur chaque arrêté pour voir la liste des fichiers HTML correspondants.</p>
+
+    <button onclick="showClassification()">Classification</button>
+    <div id="classificationResult"></div>
+    <div id="arreteFilesResult"></div>
+
+    <a class="back-home" href="http://127.0.0.1:8000/ui#">← Retour à l'accueil</a>
+</main>
+
+<script>
+const API_URL = "http://127.0.0.1:8000";
+
+// ====== Récupérer tous les types d'arrêtés ======
+function showClassification() {
+    fetch(`${API_URL}/classification`)
+    .then(r => r.json())
+    .then(data => {
+        const container = document.getElementById("classificationResult");
+        container.innerHTML = "";
+        for(const type in data){
+            const a = document.createElement("a");
+            a.href = "#";
+            a.textContent = type + ` (${data[type].length} fichiers)`;
+            a.className = "arrete";
+            a.onclick = ()=>showArreteFiles(type);
+            container.appendChild(a);
+        }
+    })
+    .catch(err=>console.error(err));
+}
+
+// ====== Afficher les fichiers liés à un arrêté ======
+function showArreteFiles(type) {
+    fetch(`${API_URL}/classification/${encodeURIComponent(type)}`)
+    .then(r=>r.json())
+    .then(data=>{
+        const container = document.getElementById("arreteFilesResult");
+        container.innerHTML = `<h3>Fichiers liés à : ${type}</h3>`;
+        const ul = document.createElement("ul");
+        data.forEach(item=>{
+            const li = document.createElement("li");
+            li.innerHTML = `<a href="file://${item.file}" target="_blank">${item.file}</a> - ${item.text} - ${item.date||""}`;
+            ul.appendChild(li);
+        });
+        container.appendChild(ul);
+    })
+    .catch(err=>console.error(err));
+}
+</script>
+
+</body>
+</html>

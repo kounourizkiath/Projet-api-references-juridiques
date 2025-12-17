@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Télécharger ZIP annoté 📦 - API Références Juridiques</title>
+<style>
+    body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+        text-align: center;
+    }
+    header {
+        background-color: #0055a4;
+        color: white;
+        padding: 20px 0;
+        font-size: 2em;
+    }
+    main {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 20px;
+        background: white;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        border-radius: 10px;
+    }
+    h1 {
+        color: #0055a4;
+    }
+    p {
+        font-size: 1em;
+        line-height: 1.5em;
+        margin-bottom: 20px;
+    }
+    input {
+        width: 80%;
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 1em;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    button {
+        background-color: #0055a4;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1em;
+        margin: 10px 5px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+    }
+    button:hover {
+        background-color: #003f7d;
+    }
+    a {
+        color: #0055a4;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 20px;
+    }
+    /* Bouton header en cohérence avec les autres boutons */
+.header-btn {
+    background-color: #0055a4; /* bleu Legifrance */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    float: right; /* place le bouton à droite */
+    margin-right: 20px;
+    transition: 0.3s;
+}
+
+.header-btn:hover {
+    background-color: #003f7d;
+}
+    
+</style>
+</head>
+<body>
+
+<header>📦 Télécharger ZIP annoté
+<a href="http://localhost:8000/documentation.html" class="header-btn" target="_blank">📖 Documentation</a
+<link rel="icon" type="image/png" href="/static/favicon.ico">
+</header>
+
+<main>
+    <h1>Génération du ZIP annoté de vos fichiers HTML</h1>
+    <p>Cette fonctionnalité vous permet de traiter tous les fichiers HTML d’un dossier et de télécharger un fichier ZIP contenant :</p>
+    <ul style="text-align: left; display: inline-block;">
+        <li>📄 Les fichiers HTML annotés</li>
+        <li>🗂️ Les fichiers JSON avec les références détectées</li>
+    </ul>
+
+    <!-- Input chemin dossier -->
+    <p>Indiquez le chemin du dossier contenant vos fichiers HTML :</p>
+    <input type="text" id="zipDirPath" placeholder="Ex: C:\\Users\\kouno\\Downloads\\Projet NLP\\data" value="C:\\Users\\kouno\\Downloads\\Projet NLP\\data">
+    <br>
+
+    <!-- Bouton téléchargement -->
+    <button onclick="downloadZip()">Télécharger ZIP 📥</button>
+
+    <!-- Message de retour / debug -->
+    <pre id="zipResult"></pre>
+
+    <!-- Bouton retour accueil -->
+    <br>
+    <a href="http://127.0.0.1:8000/ui#">🏠 Retour à l'accueil</a>
+</main>
+
+<script>
+// Base URL de ton API FastAPI
+const API_URL = "http://127.0.0.1:8000";
+
+// ====== Fonction pour générer et télécharger le ZIP ======
+function downloadZip() {
+    let path = document.getElementById("zipDirPath").value;
+    path = path.replace(/\\/g, "\\\\"); // Double backslashes pour Windows
+
+    fetch(`${API_URL}/annotate-dir-zip`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({path})
+    })
+    .then(r => {
+        if (!r.ok) return r.json().then(err => {throw err});
+        return r.blob();
+    })
+    .then(blob => {
+        // Création d'un lien temporaire pour téléchargement
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "annotated.zip";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        document.getElementById("zipResult").textContent = "✅ Téléchargement terminé !";
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("zipResult").textContent = "❌ Erreur : " + JSON.stringify(err, null, 2);
+    });
+}
+</script>
+
+</body>
+</html>

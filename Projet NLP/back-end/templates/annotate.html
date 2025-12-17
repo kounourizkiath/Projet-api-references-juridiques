@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Annoter un texte HTML - API Références Juridiques</title>
+<style>
+    /* ====== Styles globaux ====== */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+    header {
+        width: 100%;
+        background-color: #004c97;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+        box-shadow: 0px 3px 6px rgba(0,0,0,0.1);
+    }
+    main {
+        width: 80%;
+        max-width: 1000px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    p {
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    textarea {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 10px;
+        padding: 10px;
+        font-family: monospace;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        resize: vertical;
+    }
+    pre {
+        background: #f4f4f4;
+        padding: 10px;
+        overflow-x: auto;
+        max-height: 300px;
+        width: 100%;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+    button {
+        padding: 8px 15px;
+        cursor: pointer;
+        background-color: #004c97;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        margin-top: 10px;
+        transition: background 0.3s;
+    }
+    button:hover {
+        background-color: #003366;
+    }
+    .back-home {
+        display: block;
+        margin-top: 20px;
+        text-align: center;
+        color: #004c97;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .back-home:hover {
+        text-decoration: underline;
+    }
+    /* Bouton header en cohérence avec les autres boutons */
+.header-btn {
+    background-color: #0055a4; /* bleu Legifrance */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    float: right; /* place le bouton à droite */
+    margin-right: 20px;
+    transition: 0.3s;
+}
+
+.header-btn:hover {
+    background-color: #003f7d;
+}
+    
+</style>
+</head>
+<body>
+
+<!-- ====== Header ====== -->
+<header>
+<link rel="icon" type="image/png" href="/static/favicon.ico">
+    <h1>API Références Juridiques
+    <a href="http://localhost:8000/documentation.html" class="header-btn" target="_blank">📖 Documentation</a
+    </h1>
+</header>
+
+<!-- ====== Main content ====== -->
+<main>
+    <!-- ====== Description ====== -->
+    <h2>Annoter un texte HTML</h2>
+    <p>Collez ci-dessous le texte HTML que vous souhaitez annoter. Cliquez sur "Annoter" pour récupérer toutes les références juridiques détectées dans votre texte.</p>
+
+    <!-- ====== Zone de saisie ====== -->
+    <textarea id="annotateText" placeholder="Collez votre HTML ici..."></textarea>
+    <br>
+    <button onclick="annotateText()">Annoter</button>
+
+    <!-- ====== Affichage des résultats ====== -->
+    <pre id="annotateResult"></pre>
+
+    <!-- ====== Bouton retour accueil ====== -->
+    <a class="back-home" href="http://127.0.0.1:8000/ui#">← Retour à l'accueil</a>
+</main>
+
+<!-- ====== Script JS ====== -->
+<script>
+    const API_URL = "http://127.0.0.1:8000";
+
+    // ====== Fonction pour annoter le texte HTML ======
+    function annotateText() {
+        const html = document.getElementById("annotateText").value;
+        fetch(`${API_URL}/annotate`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({html})
+        })
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("annotateResult").textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(err => console.error(err));
+    }
+</script>
+
+</body>
+</html>
